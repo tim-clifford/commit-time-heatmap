@@ -11,19 +11,26 @@ repos=$(wget https://api.github.com/users/$GH_USERNAME/repos -O - 2>/dev/null \
 
 times=""
 for i in $repos; do
-	git clone $i
-	cd $(echo $i | sed 's|.*/\(.*\)\.git|\1|')
-	commits="$(git log --no-patch --no-notes --pretty='%cd----%an' --date=iso)"
+	name=$(echo $i | sed 's|.*/\(.*\)\.git|\1|')
+	echo "Scanning $name..."
+	git clone $i 2>/dev/null >/dev/null
+	cd $name
+	commits="$(git log --no-patch --no-notes --pretty='%cd|%an|%H' --date=iso)"
 	IFS="
 	"
+	rm -f wow_really.txt
 	for c in $commits; do
 		# Make sure we only count commits by the right user
-		if [ "$(echo "$c" | awk -F'----' '{print $2}')" = "$GH_NAME" ]; then
+		if [ "$(echo "$c" | awk -F'|' '{print $2}')" = "$GH_NAME" ]; then
 			times="$times $(echo "$c" | awk '{print $2}')"
+			if echo "$c" | egrep -q '0[3-5]:..:..'; then
+				echo "$(git log -1 --color=always \
+					$(echo $c | awk -F'|' '{print $3}'))" >> ../wow_really.txt
+			fi
 		fi
 	done
-	cd -
-	rm -rf $(echo $i | sed 's|.*/\(.*\)\.git|\1|')
+	cd - 2>/dev/null >/dev/null
+	rm -rf $name
 done
 
 # Just get rid of anything after the hour mark
