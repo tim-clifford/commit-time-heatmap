@@ -1,3 +1,9 @@
+
+
+| :exclamation:  | This is a mirror of [https://git.sr.ht/~tim-clifford/commit-time-heatmap](https://git.sr.ht/~tim-clifford/commit-time-heatmap). Please refrain from using GitHub's issue and PR system.  |
+|----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+
 # Commit Time Heatmap
 
 Shows you just how bad your sleep schedule is on average. Why? idk, I'm just
